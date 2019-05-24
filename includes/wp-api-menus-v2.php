@@ -95,28 +95,34 @@ if ( ! class_exists( 'WP_REST_Menus' ) ) :
          */
         public static function get_menus() {
 
-            $rest_url = trailingslashit( get_rest_url() . self::get_plugin_namespace() . '/menus/' );
+        	$rest_url = trailingslashit( get_rest_url() . self::get_plugin_namespace() . '/menus/' );
             $wp_menus = wp_get_nav_menus();
-
             $i = 0;
             $rest_menus = array();
             foreach ( $wp_menus as $wp_menu ) :
-
                 $menu = (array) $wp_menu;
-
                 $rest_menus[ $i ]                = $menu;
                 $rest_menus[ $i ]['ID']          = $menu['term_id'];
                 $rest_menus[ $i ]['name']        = $menu['name'];
                 $rest_menus[ $i ]['slug']        = $menu['slug'];
                 $rest_menus[ $i ]['description'] = $menu['description'];
                 $rest_menus[ $i ]['count']       = $menu['count'];
-
                 $rest_menus[ $i ]['meta']['links']['collection'] = $rest_url;
                 $rest_menus[ $i ]['meta']['links']['self']       = $rest_url . $menu['term_id'];
 
+                // check if there is acf installed
+		        if( class_exists('acf') ) {
+		            $fields = get_fields($wp_menu);
+		            if(!empty($fields)) {
+		                foreach($fields as $field_key => $item) {
+		                    // add all acf custom fields
+		                    $rest_menus[ $i ]['acf']->$field_key = $item;
+		                }
+		            }
+		        }
+
                 $i ++;
             endforeach;
-
             return apply_filters( 'rest_menus_format_menus', $rest_menus );
         }
 
@@ -153,9 +159,24 @@ if ( ! class_exists( 'WP_REST_Menus' ) ) :
 
                 $rest_menu_items = $this->nested_menu_items($rest_menu_items, 0);
 
-                $rest_menu['items']                       = $rest_menu_items;
                 $rest_menu['meta']['links']['collection'] = $rest_url;
                 $rest_menu['meta']['links']['self']       = $rest_url . $id;
+
+                // check if there is acf installed
+			    if (class_exists('acf')) {
+			        foreach ($rest_menu_items as $menu_key => $menu_item) {
+			            $fields = get_fields($menu_item['id']);
+			            if (!empty($fields)) {
+			                foreach ($fields as $field_key => $item) {
+			                    // add all acf custom fields
+			                    $rest_menu_items[$menu_key]['acf']->$field_key = $item;
+			                }
+			            }
+			        }
+			    }
+
+			    $rest_menu['items'] = $rest_menu_items;
+
 
             endif;
 
