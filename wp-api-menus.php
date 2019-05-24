@@ -1,13 +1,13 @@
 <?php
 /**
- * Plugin Name: WP REST API Menus
- * Plugin URI:  https://github.com/nekojira/wp-api-menus
+ * Plugin Name: WP REST API Menus (with ACF support)
+ * Plugin URI:  https://github.com/tomphill/wp-api-menus
  * Description: Extends WP API with WordPress menu routes.
  *
- * Version:     1.3.1
+ * Version:     1.3.2
  *
- * Author:      Fulvio Notarstefano
- * Author URI:  https://github.com/unfulvio
+ * Author:      Tom Phillips
+ * Author URI:  https://github.com/tomphill
  *
  * Text Domain: wp-api-menus
  *
